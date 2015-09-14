@@ -16,6 +16,7 @@ namespace Snake
             this.posX = X;
             this.posY = Y;
         }
+
         public void Set(Point input)
         {
             this.posX = input.X;
@@ -27,11 +28,13 @@ namespace Snake
             get { return this.posX; }
             set { this.posX = value; }
         }
+
         public int Y
         {
             get { return this.posY; }
             set { this.posY = value; }
         }
+
         public override string ToString()
         {
             return "[" + this.posX + ", " + this.posY + "]";

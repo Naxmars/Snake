@@ -9,33 +9,54 @@ namespace Snake
 {
     class Program
     {
-        public static GameField hra;
+        private const int WindowWidth = 25;
+        private const int WindowHeight = 80;
+        private const string WindowTitle = "Sharp Snake";
+
+        private static Game game;
+
         static void Control()
         {
-            while (hra.isRunning)
+            while (game.IsRunning)
             {
-                ConsoleKeyInfo a = Console.ReadKey();
+                ConsoleKeyInfo a = Console.ReadKey(true);
                 ConsoleKey key = a.Key;
-                if (key.ToString().Contains("A")) { if (hra.direction != 2) hra.direction = 1; }
-                else if (key.ToString().Contains("D")) { if (hra.direction != 1) hra.direction = 2; }
-                else if (key.ToString().Contains("W")) { if (hra.direction != 4) hra.direction = 3; }
-                else if (key.ToString().Contains("S")) { if (hra.direction != 3) hra.direction = 4; }
+                if (key == ConsoleKey.A) { if (game.Direction != 2) game.Direction = 1; }
+                else if (key == ConsoleKey.D) { if (game.Direction != 1) game.Direction = 2; }
+                else if (key == ConsoleKey.W) { if (game.Direction != 4) game.Direction = 3; }
+                else if (key == ConsoleKey.S) { if (game.Direction != 3) game.Direction = 4; }
+                else if (key == ConsoleKey.F1) { Console.BackgroundColor = ToggleColor(Console.BackgroundColor); }
+                else if (key == ConsoleKey.F2) { Console.ForegroundColor = ToggleColor(Console.ForegroundColor); }
                 Thread.Sleep(100);
             }
         }
 
+        static ConsoleColor ToggleColor(ConsoleColor curCol)
+        {
+            if (curCol != (ConsoleColor)15)
+                return (ConsoleColor)((int)(curCol) + 1);
+            else
+                return (ConsoleColor)0;
+        }
+
         static void Main(string[] args)
         {
-            hra = new GameField(20, 20);
-            Thread thread = new Thread(new ThreadStart(Control));
-            hra.Start();
-            thread.Start();
+            Console.SetWindowSize(WindowHeight, WindowWidth);
+            Console.SetBufferSize(WindowHeight, WindowWidth);
+            Console.BackgroundColor = ConsoleColor.DarkCyan;
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.CursorVisible = false;
+            game = new Game(Console.BufferHeight - 1, Console.BufferWidth);
+            Thread inputThread = new Thread(new ThreadStart(Control));
+            game.Start();
+            inputThread.Start();
 
-            while (hra.isRunning)
+            while (game.IsRunning)
             {
-                Console.SetCursorPosition(0,0);
-                Console.Write(hra.mapToString());
-                hra.updateSnake();
+                Console.SetCursorPosition(0, 0);
+                Console.Write(game.MapToString());
+                game.UpdateSnake();
+                Console.Title = WindowTitle + " :: " + "[Skóre: " + game.Score + "]";
                 Thread.Sleep(100);
             }
         }
